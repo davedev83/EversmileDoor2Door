@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Door2Door Marketing - Visit Form</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header with Logo and Progress -->
+        <header class="header">
+            <div class="logo-container">
+                <img src="/logo.png" alt="Company Logo" class="logo">
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                <div class="progress-text">
+                    <span id="currentStep">1</span> of <span id="totalSteps">6</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Form Container -->
+        <main class="form-container">
+            <form id="visitForm" class="multistep-form">
+                
+                <!-- Step 1: Visit Date -->
+                <div class="form-step active" data-step="1">
+                    <h2 class="step-title">Visit Date</h2>
+                    <div class="input-group">
+                        <label for="visitDate">Select visit date:</label>
+                        <input type="date" id="visitDate" name="visitDate" required>
+                    </div>
+                </div>
+
+                <!-- Step 2: Practice Information -->
+                <div class="form-step" data-step="2">
+                    <h2 class="step-title">Practice Information</h2>
+                    <div class="input-group">
+                        <label for="practiceName">Practice Name:</label>
+                        <input type="text" id="practiceName" name="practiceName" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="phone">Phone:</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="address">Address:</label>
+                        <textarea id="address" name="address" rows="3" required></textarea>
+                    </div>
+                </div>
+
+                <!-- Step 3: Samples Provided -->
+                <div class="form-step" data-step="3">
+                    <h2 class="step-title">Samples Provided</h2>
+                    <div class="checkbox-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="samplesProvided" value="None">
+                            <span class="checkmark"></span>
+                            None
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="samplesProvided" value="AlignerFresh Mint">
+                            <span class="checkmark"></span>
+                            AlignerFresh Mint
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="samplesProvided" value="AlignerFresh Flavors">
+                            <span class="checkmark"></span>
+                            AlignerFresh Flavors
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="samplesProvided" value="AllClean Minerals">
+                            <span class="checkmark"></span>
+                            AllClean Minerals
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="samplesProvided" value="IPR Glide">
+                            <span class="checkmark"></span>
+                            IPR Glide
+                        </label>
+                        <label class="checkbox-item">
+                            <input type="checkbox" name="samplesProvided" value="Other" id="otherCheckbox">
+                            <span class="checkmark"></span>
+                            Other
+                        </label>
+                    </div>
+                    <div class="input-group" id="otherSampleGroup" style="display: none;">
+                        <label for="otherSample">Specify other sample:</label>
+                        <input type="text" id="otherSample" name="otherSample">
+                    </div>
+                </div>
+
+                <!-- Step 4: Topics and Notes -->
+                <div class="form-step" data-step="4">
+                    <h2 class="step-title">Topics & Notes</h2>
+                    <div class="input-group">
+                        <label for="topicsDiscussed">Topics discussed and notes:</label>
+                        <textarea id="topicsDiscussed" name="topicsDiscussed" rows="6" required 
+                                  placeholder="Enter topics discussed, key points, follow-up actions, etc."></textarea>
+                    </div>
+                </div>
+
+                <!-- Step 5: Credit Card Information -->
+                <div class="form-step" data-step="5">
+                    <h2 class="step-title">Credit Card Information</h2>
+                    <div class="input-group">
+                        <label for="cardName">Cardholder Name:</label>
+                        <input type="text" id="cardName" name="cardName" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="cardNumber">Card Number:</label>
+                        <input type="text" id="cardNumber" name="cardNumber" required maxlength="19" 
+                               placeholder="1234 5678 9012 3456">
+                    </div>
+                    <div class="input-row">
+                        <div class="input-group">
+                            <label for="expiryMonth">Month:</label>
+                            <select id="expiryMonth" name="expiryMonth" required>
+                                <option value="">MM</option>
+                                <option value="01">01</option>
+                                <option value="02">02</option>
+                                <option value="03">03</option>
+                                <option value="04">04</option>
+                                <option value="05">05</option>
+                                <option value="06">06</option>
+                                <option value="07">07</option>
+                                <option value="08">08</option>
+                                <option value="09">09</option>
+                                <option value="10">10</option>
+                                <option value="11">11</option>
+                                <option value="12">12</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="expiryYear">Year:</label>
+                            <select id="expiryYear" name="expiryYear" required>
+                                <option value="">YYYY</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label for="cvv">CVV:</label>
+                            <input type="text" id="cvv" name="cvv" required maxlength="4" placeholder="123">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 6: Review and Submit -->
+                <div class="form-step" data-step="6">
+                    <h2 class="step-title">Review & Submit</h2>
+                    <div class="review-section" id="reviewSection">
+                        <!-- Review content will be populated by JavaScript -->
+                    </div>
+                    <div class="submit-status" id="submitStatus"></div>
+                </div>
+
+            </form>
+        </main>
+
+        <!-- Navigation -->
+        <nav class="navigation">
+            <button type="button" id="prevBtn" class="nav-btn prev-btn" disabled>
+                <span class="btn-text">Previous</span>
+            </button>
+            <button type="button" id="nextBtn" class="nav-btn next-btn">
+                <span class="btn-text">Next</span>
+            </button>
+        </nav>
+    </div>
+
+    <script src="/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+{
+  "name": "door2doormarketing",
+  "version": "1.0.0",
+  "main": "pages/index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/davedev83/EversmileDoor2Door.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/davedev83/EversmileDoor2Door/issues"
+  },
+  "homepage": "https://github.com/davedev83/EversmileDoor2Door#readme",
+  "keywords": [],
+  "description": "Door-to-door marketing web app for dental practice visits",
+  "dependencies": {
+    "@sendgrid/mail": "^8.1.5",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "mongoose": "^8.17.0",
+    "next": "^15.4.5",
+    "react": "^19.1.1",
+    "react-datepicker": "^8.4.0",
+    "react-dom": "^19.1.1"
+  }
+}
