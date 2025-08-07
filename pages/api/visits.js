@@ -23,6 +23,24 @@ if (process.env.SENDGRID_API_KEY) {
   sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 }
 
+// Validation function to prevent empty visits
+const validateVisitData = (data) => {
+  // Must have practice name and at least one contact field (phone or email)
+  const hasPracticeName = data.practiceName && data.practiceName.trim().length > 0;
+  const hasContactInfo = (data.phone && data.phone.trim().length > 0) ||
+                        (data.email && data.email.trim().length > 0);
+
+  if (!hasPracticeName) {
+    throw new Error('Practice name is required');
+  }
+
+  if (!hasContactInfo) {
+    throw new Error('Phone or email is required');
+  }
+
+  return true;
+};
+
 export default async function handler(req, res) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -74,6 +92,16 @@ export default async function handler(req, res) {
     if (req.method === 'POST') {
       // Create new visit
       const requestData = { ...req.body };
+
+      // Validate visit data to prevent empty visits
+      try {
+        validateVisitData(requestData);
+      } catch (validationError) {
+        return res.status(400).json({
+          success: false,
+          error: validationError.message
+        });
+      }
 
       // Process visitDate to ensure it's set to noon
       if (requestData.visitDate) {
@@ -156,6 +184,16 @@ export default async function handler(req, res) {
       }
 
       const updateData = { ...req.body };
+
+      // Validate visit data to prevent empty visits
+      try {
+        validateVisitData(updateData);
+      } catch (validationError) {
+        return res.status(400).json({
+          success: false,
+          error: validationError.message
+        });
+      }
 
       // Process visitDate to ensure it's set to noon
       if (updateData.visitDate) {

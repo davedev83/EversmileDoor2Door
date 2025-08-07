@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test API Validation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .success {
+            color: #155724;
+            background: #d4edda;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 API Validation Test</h1>
+    <p>This page tests the server-side validation to ensure empty visits cannot be created.</p>
+
+    <div class="test-section">
+        <h2>Test 1: Empty Visit (Should Fail)</h2>
+        <button onclick="testEmptyVisit()">Test Empty Visit</button>
+        <div id="empty-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 2: Only Date (Should Fail)</h2>
+        <button onclick="testOnlyDate()">Test Only Date</button>
+        <div id="date-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 3: Missing Contact Info (Should Fail)</h2>
+        <button onclick="testMissingContact()">Test Missing Contact</button>
+        <div id="contact-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 4: Valid Visit (Should Succeed)</h2>
+        <button onclick="testValidVisit()">Test Valid Visit</button>
+        <div id="valid-result"></div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test 5: Minimal Valid Visit (Should Succeed)</h2>
+        <button onclick="testMinimalValid()">Test Minimal Valid</button>
+        <div id="minimal-result"></div>
+    </div>
+
+    <script>
+        async function makeRequest(data, resultElementId) {
+            const resultElement = document.getElementById(resultElementId);
+            resultElement.innerHTML = '<p>Testing...</p>';
+
+            try {
+                const response = await fetch('/api/visits', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    resultElement.innerHTML = `
+                        <div class="success">✅ SUCCESS: Visit created with ID: ${result.visitId}</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    resultElement.innerHTML = `
+                        <div class="error">❌ VALIDATION ERROR: ${result.error}</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                }
+            } catch (error) {
+                resultElement.innerHTML = `
+                    <div class="error">❌ NETWORK ERROR: ${error.message}</div>
+                    <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+            }
+        }
+
+        function testEmptyVisit() {
+            makeRequest({}, 'empty-result');
+        }
+
+        function testOnlyDate() {
+            makeRequest({
+                visitDate: new Date().toISOString(),
+                status: 'draft'
+            }, 'date-result');
+        }
+
+        function testMissingContact() {
+            makeRequest({
+                visitDate: new Date().toISOString(),
+                practiceName: 'Test Practice',
+                status: 'draft'
+            }, 'contact-result');
+        }
+
+        function testValidVisit() {
+            makeRequest({
+                visitDate: new Date().toISOString(),
+                practiceName: 'Test Practice',
+                phone: '555-1234',
+                email: 'test@example.com',
+                address: '123 Test St',
+                status: 'draft'
+            }, 'valid-result');
+        }
+
+        function testMinimalValid() {
+            makeRequest({
+                practiceName: 'Minimal Practice',
+                phone: '555-5678',
+                status: 'draft'
+            }, 'minimal-result');
+        }
+    </script>
+</body>
+</html>

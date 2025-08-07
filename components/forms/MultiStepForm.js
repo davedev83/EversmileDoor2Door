@@ -403,8 +403,9 @@ const MultiStepForm = ({
       console.error('Error saving draft:', error);
       // Don't block the user if draft save fails, but show error for manual saves
       if (!isAutoSave) {
-        setSubmitStatus('❌ Failed to save draft');
-        setTimeout(() => setSubmitStatus(''), 3000);
+        const errorMessage = error.message || 'Failed to save draft';
+        setSubmitStatus(`❌ ${errorMessage}`);
+        setTimeout(() => setSubmitStatus(''), 5000);
       }
     } finally {
       setIsSaving(false);
