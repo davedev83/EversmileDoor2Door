@@ -136,11 +136,12 @@ export const deleteVisit = async (visitId) => {
 /**
  * Saves a visit (create or update based on whether it has an ID)
  * @param {Object} visitData - Visit data to save
- * @param {boolean} isEditing - Whether this is an edit operation
+ * @param {boolean} hasVisitId - Whether this visit has an ID (for update) or should be created
  * @returns {Promise<Object>} Save response
  */
-export const saveVisit = async (visitData, isEditing = false) => {
-  if (isEditing && visitData._id) {
+export const saveVisit = async (visitData, hasVisitId = false) => {
+  // If we have a visit ID in the data, always update
+  if (visitData._id) {
     return updateVisit(visitData);
   } else {
     return createVisit(visitData);

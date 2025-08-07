@@ -352,19 +352,17 @@ const MultiStepForm = ({
       const data = collectFormData();
       data.status = 'draft';
 
-      // Determine if this is an update operation
-      const hasVisitId = isEditing || currentVisitId;
-
+      // Set the visit ID if we have one
       if (isEditing) {
         data._id = existingData._id;
       } else if (currentVisitId) {
         data._id = currentVisitId;
       }
 
-      const result = await saveVisit(data, hasVisitId);
+      const result = await saveVisit(data);
 
       // If this was a new visit creation, store the visit ID
-      if (!isEditing && !currentVisitId && result.visitId) {
+      if (!currentVisitId && result.visitId) {
         setCurrentVisitId(result.visitId);
         localStorage.setItem(formSessionKey, result.visitId);
       }
@@ -400,22 +398,17 @@ const MultiStepForm = ({
       setSubmitStatus(actionText);
 
       const data = collectFormData();
+      data.status = 'saved';
 
-      // Determine if this is an update operation
-      const hasVisitId = isEditing || currentVisitId;
-
+      // Set the visit ID if we have one
       if (isEditing) {
         data._id = existingData._id;
-        data.status = 'saved';
         data.isRealUpdate = originalStatus === 'saved';
       } else if (currentVisitId) {
         data._id = currentVisitId;
-        data.status = 'saved';
-      } else {
-        data.status = 'saved';
       }
 
-      const result = await saveVisit(data, hasVisitId);
+      const result = await saveVisit(data);
 
       if (result.success) {
         // Clear localStorage since we successfully saved
