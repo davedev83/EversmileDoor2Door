@@ -65,7 +65,6 @@ const MultiStepForm = ({
   const [submitStatus, setSubmitStatus] = useState('');
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [lastSaveTime, setLastSaveTime] = useState(null);
-  const [autoSaveInterval, setAutoSaveInterval] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   // Track visit ID to prevent duplicate creation during auto-save
   const [currentVisitId, setCurrentVisitId] = useState(null);
@@ -104,36 +103,7 @@ const MultiStepForm = ({
     };
   }, [existingData]);
 
-  // Setup auto-save interval and cleanup
-  useEffect(() => {
-    // Clear existing interval
-    if (autoSaveInterval) {
-      clearInterval(autoSaveInterval);
-    }
 
-    // Start auto-save interval (every 30 seconds) only if we have unsaved changes
-    if (hasUnsavedChanges && currentStep >= FORM_STEPS.PRACTICE_INFO) {
-      const interval = setInterval(() => {
-        // Only auto-save if we have unsaved changes, we're not already saving,
-        // and we have minimum required data (or we're editing an existing visit)
-        if (hasUnsavedChanges &&
-            currentStep >= FORM_STEPS.PRACTICE_INFO &&
-            !isSaving &&
-            (isEditing || hasMinimumRequiredData())) {
-          saveDraft(true); // true indicates auto-save
-        }
-      }, 30000);
-
-      setAutoSaveInterval(interval);
-    }
-
-    // Cleanup interval on unmount
-    return () => {
-      if (autoSaveInterval) {
-        clearInterval(autoSaveInterval);
-      }
-    };
-  }, [hasUnsavedChanges, currentStep]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Setup beforeunload warning for unsaved changes and cleanup
   useEffect(() => {
@@ -243,12 +213,22 @@ const MultiStepForm = ({
     return hasPracticeName && hasContactInfo;
   };
 
-  const handleInputChange = (field, value) => {
-    updateFormData({ [field]: value });
-    // Only mark as having unsaved changes if we're editing or if we have/will have minimum required data
+  // Centralized function to mark unsaved changes with proper safeguards
+  const markUnsavedChanges = () => {
+    // Never mark unsaved changes on Visit Date step (no important data to save)
+    if (currentStep === FORM_STEPS.VISIT_DATE) {
+      return;
+    }
+
+    // Only mark as having unsaved changes if we're editing or on practice info step or later
     if (isEditing || currentStep >= FORM_STEPS.PRACTICE_INFO) {
       setHasUnsavedChanges(true);
     }
+  };
+
+  const handleInputChange = (field, value) => {
+    updateFormData({ [field]: value });
+    markUnsavedChanges();
     clearErrors();
   };
 
@@ -257,7 +237,7 @@ const MultiStepForm = ({
       ...prev,
       [sampleId]: quantity
     }));
-    setHasUnsavedChanges(true);
+    markUnsavedChanges();
   };
 
   const handleToggleChange = (toggleName, value) => {
@@ -265,7 +245,7 @@ const MultiStepForm = ({
       ...prev,
       [toggleName]: value
     }));
-    setHasUnsavedChanges(true);
+    markUnsavedChanges();
   };
 
   const handleSurveyChange = (field, value) => {
@@ -273,7 +253,7 @@ const MultiStepForm = ({
       ...prev,
       [field]: value
     }));
-    setHasUnsavedChanges(true);
+    markUnsavedChanges();
     clearErrors();
   };
 
@@ -293,18 +273,23 @@ const MultiStepForm = ({
       return;
     }
 
+    // Save draft when leaving a step that has important data (Practice Info or later)
+    // and we have minimum required data
+    const shouldSave = currentStep >= FORM_STEPS.PRACTICE_INFO &&
+                      !isSaving &&
+                      (isEditing || hasMinimumRequiredData());
+
     // Move to next step first
     nextStep();
 
-    // Auto-save as draft after moving to the step (starting from practice information)
-    // Only save if we have minimum required data and we're not already saving
-    if (currentStep >= FORM_STEPS.PRACTICE_INFO && !isSaving && (isEditing || hasMinimumRequiredData())) {
+    // Save after moving to next step if needed
+    if (shouldSave) {
       // Add a small delay to prevent rapid saves when users click quickly
       setTimeout(() => {
         if (!isSaving) {
           saveDraft();
         }
-      }, 500);
+      }, 300);
     }
   };
 
@@ -523,7 +508,7 @@ const MultiStepForm = ({
                 selectedDate={selectedDate}
                 onChange={(date) => {
                   setSelectedDate(date);
-                  setHasUnsavedChanges(true);
+                  // Don't mark unsaved changes for date picker - no important data to save
                 }}
                 error={errors.visitDate}
                 required
@@ -614,7 +599,7 @@ const MultiStepForm = ({
               otherSample={otherSample}
               onOtherSampleChange={(value) => {
                 setOtherSample(value);
-                setHasUnsavedChanges(true);
+                markUnsavedChanges();
               }}
               error={errors.samples}
             />
