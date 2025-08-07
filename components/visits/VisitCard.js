@@ -43,7 +43,7 @@ const VisitCard = ({
           onClick={handleDeleteClick}
           title="Delete visit"
         >
-          🗑️
+          ×
         </button>
       )}
       

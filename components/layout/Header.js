@@ -19,11 +19,6 @@ const Header = ({
             className="logo"
           />
         </div>
-        {isAdminMode && (
-          <div className="admin-indicator">
-            🔧 Admin Mode - Delete visits enabled
-          </div>
-        )}
       </div>
       {children}
     </header>
