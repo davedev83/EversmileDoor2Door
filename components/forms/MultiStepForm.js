@@ -66,6 +66,7 @@ const MultiStepForm = ({
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [lastSaveTime, setLastSaveTime] = useState(null);
   const [autoSaveInterval, setAutoSaveInterval] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
   // Track visit ID to prevent duplicate creation during auto-save
   const [currentVisitId, setCurrentVisitId] = useState(null);
   const [formSessionKey] = useState(() => `visitForm_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`);
@@ -113,7 +114,12 @@ const MultiStepForm = ({
     // Start auto-save interval (every 30 seconds) only if we have unsaved changes
     if (hasUnsavedChanges && currentStep >= FORM_STEPS.PRACTICE_INFO) {
       const interval = setInterval(() => {
-        if (hasUnsavedChanges && currentStep >= FORM_STEPS.PRACTICE_INFO) {
+        // Only auto-save if we have unsaved changes, we're not already saving,
+        // and we have minimum required data (or we're editing an existing visit)
+        if (hasUnsavedChanges &&
+            currentStep >= FORM_STEPS.PRACTICE_INFO &&
+            !isSaving &&
+            (isEditing || hasMinimumRequiredData())) {
           saveDraft(true); // true indicates auto-save
         }
       }, 30000);
@@ -227,9 +233,22 @@ const MultiStepForm = ({
     return saveTime.toLocaleDateString();
   };
 
+  // Check if we have minimum required data to save a visit
+  const hasMinimumRequiredData = () => {
+    // Must have practice name and at least one contact field
+    const hasPracticeName = formData.practiceName && formData.practiceName.trim().length > 0;
+    const hasContactInfo = (formData.phone && formData.phone.trim().length > 0) ||
+                          (formData.email && formData.email.trim().length > 0);
+
+    return hasPracticeName && hasContactInfo;
+  };
+
   const handleInputChange = (field, value) => {
     updateFormData({ [field]: value });
-    setHasUnsavedChanges(true);
+    // Only mark as having unsaved changes if we're editing or if we have/will have minimum required data
+    if (isEditing || currentStep >= FORM_STEPS.PRACTICE_INFO) {
+      setHasUnsavedChanges(true);
+    }
     clearErrors();
   };
 
@@ -274,12 +293,19 @@ const MultiStepForm = ({
       return;
     }
 
-    // Auto-save as draft after every step (starting from practice information)
-    if (currentStep >= FORM_STEPS.PRACTICE_INFO) {
-      saveDraft();
-    }
-
+    // Move to next step first
     nextStep();
+
+    // Auto-save as draft after moving to the step (starting from practice information)
+    // Only save if we have minimum required data and we're not already saving
+    if (currentStep >= FORM_STEPS.PRACTICE_INFO && !isSaving && (isEditing || hasMinimumRequiredData())) {
+      // Add a small delay to prevent rapid saves when users click quickly
+      setTimeout(() => {
+        if (!isSaving) {
+          saveDraft();
+        }
+      }, 500);
+    }
   };
 
   const handlePrev = () => {
@@ -348,7 +374,20 @@ const MultiStepForm = ({
   };
 
   const saveDraft = async (isAutoSave = false) => {
+    // Prevent concurrent saves
+    if (isSaving) {
+      console.log('Save already in progress, skipping...');
+      return;
+    }
+
+    // Don't save if we don't have minimum required data (unless editing existing visit)
+    if (!isEditing && !hasMinimumRequiredData()) {
+      console.log('Insufficient data for saving, skipping auto-save...');
+      return;
+    }
+
     try {
+      setIsSaving(true);
       const data = collectFormData();
       data.status = 'draft';
 
@@ -382,6 +421,8 @@ const MultiStepForm = ({
         setSubmitStatus('❌ Failed to save draft');
         setTimeout(() => setSubmitStatus(''), 3000);
       }
+    } finally {
+      setIsSaving(false);
     }
   };
 
