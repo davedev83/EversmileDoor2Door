@@ -4,6 +4,7 @@ A mobile-first Next.js web application for door-to-door marketers to quickly inp
 
 ## Features
 
+- **Secure Authentication**: Password-protected access with long-lasting sessions (password: "eversmile")
 - **Mobile-First Design**: Optimized for mobile devices with touch-friendly interface
 - **Multistep Form**: 6-step process for efficient data entry
 - **Swipe Navigation**: Swipe between steps on mobile (arrow keys on desktop)
@@ -48,6 +49,7 @@ A mobile-first Next.js web application for door-to-door marketers to quickly inp
      SENDGRID_API_KEY=your_sendgrid_api_key
      NOTIFICATION_EMAIL=admin@yourcompany.com
      FROM_EMAIL=noreply@yourcompany.com
+     SESSION_SECRET=your_very_long_and_secure_session_secret_key_here_at_least_32_characters
      ```
 
 4. **Start local development server**
@@ -57,6 +59,8 @@ A mobile-first Next.js web application for door-to-door marketers to quickly inp
 
 5. **Access the application**
    - Open your browser and go to `http://localhost:3000`
+   - Enter the password "eversmile" to access the application
+   - Sessions last for 1 year for maximum convenience
    - The app is optimized for mobile, so test on a mobile device or use browser dev tools
 
 ### Vercel Deployment

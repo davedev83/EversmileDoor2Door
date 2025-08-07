@@ -1,0 +1,36 @@
+/**
+ * Main app container component
+ */
+
+import React from 'react';
+
+const AppContainer = ({ children }) => {
+  return (
+    <div className="app-container">
+      {children}
+      
+      <style jsx>{`
+        .app-container {
+          max-width: 500px;
+          margin: 0 auto;
+          height: 100vh;
+          height: 100dvh; /* Dynamic viewport height for mobile browsers */
+          display: flex;
+          flex-direction: column;
+          background: white;
+          box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+          overflow: hidden;
+          position: relative;
+        }
+
+        @media (max-width: 480px) {
+          .app-container {
+            max-width: 100%;
+          }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+export default AppContainer;

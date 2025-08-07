@@ -308,9 +308,9 @@ body {
 }
 
 .submit-status.error {
-    background: #fde7f0;
-    color: #ED337D;
-    border: 1px solid #f7b3d1;
+    background: #C7E8FF;
+    color: #127BB8;
+    border: 1px solid #9dd4f7;
 }
 
 .submit-status.loading {

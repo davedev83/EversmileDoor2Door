@@ -1,0 +1,238 @@
+/**
+ * Component-specific styles
+ */
+
+/* Header Styles */
+.header {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: white;
+  border-bottom: 1px solid var(--border-color);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  position: relative;
+}
+
+.logo-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.text-logo {
+  font-size: 32px;
+  font-weight: 700;
+  color: #127BB8;
+  letter-spacing: -0.5px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.logo {
+  height: auto;
+  max-height: 60px;
+  width: auto;
+  display: block;
+  margin: 0 auto;
+  padding: 12px 0;
+}
+
+.admin-indicator {
+  background: var(--warning-color);
+  color: #856404;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--border-radius);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Responsive styles for text logo */
+@media (max-width: 480px) {
+  .text-logo {
+    font-size: 28px;
+  }
+}
+
+
+
+/* Form Styles */
+.form-container {
+  flex: 1;
+  padding: var(--spacing-xl) var(--spacing-lg);
+  overflow-y: auto;
+}
+
+.form-step {
+  display: none;
+  animation: fadeIn var(--transition-normal);
+}
+
+.form-step.active {
+  display: block;
+}
+
+.step-title {
+  font-size: var(--font-size-xxl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-xl);
+  text-align: center;
+}
+
+/* Navigation Styles */
+.navigation-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-lg);
+  border-top: 1px solid var(--border-color);
+  background: white;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+}
+
+.nav-button {
+  min-width: 120px;
+}
+
+/* Status Styles */
+.submit-status {
+  text-align: center;
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius);
+  margin-bottom: var(--spacing-md);
+}
+
+.submit-status.loading {
+  background: #f8f9fa;
+  color: var(--text-secondary);
+}
+
+.submit-status.success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.submit-status.error {
+  background: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Review Styles */
+.review-section {
+  background: #f8f9fa;
+  border-radius: var(--border-radius);
+  padding: var(--spacing-lg);
+  border: 2px solid var(--border-color);
+}
+
+.review-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: var(--spacing-sm) 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.review-item:last-child {
+  border-bottom: none;
+}
+
+.review-label {
+  font-weight: var(--font-weight-medium);
+  color: var(--text-secondary);
+  min-width: 120px;
+  flex-shrink: 0;
+}
+
+.review-value {
+  color: var(--text-primary);
+  text-align: right;
+  word-break: break-word;
+}
+
+/* Draft Indicator */
+.draft-indicator {
+  display: none;
+  position: absolute;
+  right: var(--spacing-lg);
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--secondary-color);
+  color: var(--primary-color);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: 20px;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  animation: fadeInOut var(--transition-normal);
+}
+
+@keyframes fadeInOut {
+  from { opacity: 0; transform: translateY(-50%) translateX(10px); }
+  to { opacity: 1; transform: translateY(-50%) translateX(0); }
+}
+
+/* Pagination Styles */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-xl);
+  padding: var(--spacing-lg);
+}
+
+.pagination-info {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-secondary);
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .form-container {
+    padding: var(--spacing-lg) var(--spacing-md);
+  }
+  
+  .navigation-container {
+    padding: var(--spacing-md);
+  }
+  
+  .nav-button {
+    min-width: 100px;
+  }
+  
+  .review-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+  }
+  
+  .review-label {
+    min-width: auto;
+  }
+  
+  .review-value {
+    text-align: left;
+  }
+  
+  .pagination {
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+  }
+}
