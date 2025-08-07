@@ -66,6 +66,9 @@ const MultiStepForm = ({
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [lastSaveTime, setLastSaveTime] = useState(null);
   const [autoSaveInterval, setAutoSaveInterval] = useState(null);
+  // Track visit ID to prevent duplicate creation during auto-save
+  const [currentVisitId, setCurrentVisitId] = useState(null);
+  const [formSessionKey] = useState(() => `visitForm_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`);
 
   // Setup swipe gestures
   useSwipeGestures(
@@ -80,8 +83,25 @@ const MultiStepForm = ({
       // When editing existing data, we don't have unsaved changes initially
       setHasUnsavedChanges(false);
       setLastSaveTime(new Date(existingData.updatedAt || existingData.createdAt || new Date()));
+      setCurrentVisitId(existingData._id);
+    } else {
+      // For new forms, check if there's a visit ID in localStorage
+      const storedVisitId = localStorage.getItem(formSessionKey);
+      if (storedVisitId) {
+        setCurrentVisitId(storedVisitId);
+      }
     }
   }, [existingData]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Clear localStorage when component unmounts or when successfully saving
+  useEffect(() => {
+    return () => {
+      // Only clear if we're not editing an existing visit
+      if (!existingData) {
+        localStorage.removeItem(formSessionKey);
+      }
+    };
+  }, [existingData]);
 
   // Setup auto-save interval and cleanup
   useEffect(() => {
@@ -109,7 +129,7 @@ const MultiStepForm = ({
     };
   }, [hasUnsavedChanges, currentStep]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Setup beforeunload warning for unsaved changes
+  // Setup beforeunload warning for unsaved changes and cleanup
   useEffect(() => {
     const handleBeforeUnload = (e) => {
       if (hasUnsavedChanges) {
@@ -117,11 +137,16 @@ const MultiStepForm = ({
         e.returnValue = 'You have unsaved changes. Are you sure you want to leave?';
         return 'You have unsaved changes. Are you sure you want to leave?';
       }
+
+      // Clean up localStorage on page unload if not editing existing visit
+      if (!isEditing && currentVisitId) {
+        localStorage.removeItem(formSessionKey);
+      }
     };
 
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [hasUnsavedChanges]);
+  }, [hasUnsavedChanges, isEditing, currentVisitId, formSessionKey]);
 
   const populateExistingData = () => {
     // Set date
@@ -327,11 +352,22 @@ const MultiStepForm = ({
       const data = collectFormData();
       data.status = 'draft';
 
+      // Determine if this is an update operation
+      const hasVisitId = isEditing || currentVisitId;
+
       if (isEditing) {
         data._id = existingData._id;
+      } else if (currentVisitId) {
+        data._id = currentVisitId;
       }
 
-      await saveVisit(data, isEditing);
+      const result = await saveVisit(data, hasVisitId);
+
+      // If this was a new visit creation, store the visit ID
+      if (!isEditing && !currentVisitId && result.visitId) {
+        setCurrentVisitId(result.visitId);
+        localStorage.setItem(formSessionKey, result.visitId);
+      }
 
       // Update state
       setHasUnsavedChanges(false);
@@ -354,7 +390,7 @@ const MultiStepForm = ({
   const handleSubmit = async () => {
     try {
       setLoading(true);
-      
+
       let actionText;
       if (isEditing && originalStatus === 'saved') {
         actionText = 'Updating visit data...';
@@ -365,17 +401,29 @@ const MultiStepForm = ({
 
       const data = collectFormData();
 
+      // Determine if this is an update operation
+      const hasVisitId = isEditing || currentVisitId;
+
       if (isEditing) {
         data._id = existingData._id;
         data.status = 'saved';
         data.isRealUpdate = originalStatus === 'saved';
+      } else if (currentVisitId) {
+        data._id = currentVisitId;
+        data.status = 'saved';
       } else {
         data.status = 'saved';
       }
 
-      const result = await saveVisit(data, isEditing);
+      const result = await saveVisit(data, hasVisitId);
 
       if (result.success) {
+        // Clear localStorage since we successfully saved
+        if (!isEditing) {
+          localStorage.removeItem(formSessionKey);
+          setCurrentVisitId(null);
+        }
+
         // Clear unsaved changes since we successfully saved
         setHasUnsavedChanges(false);
         setLastSaveTime(new Date());
@@ -403,9 +451,18 @@ const MultiStepForm = ({
     }
   };
 
+  const handleBackClick = () => {
+    // Clear localStorage when user navigates back (cancels the form)
+    if (!isEditing && currentVisitId) {
+      localStorage.removeItem(formSessionKey);
+      setCurrentVisitId(null);
+    }
+    onBack?.();
+  };
+
   return (
     <div className="multistep-form">
-      <Breadcrumb onBackClick={onBack}>
+      <Breadcrumb onBackClick={handleBackClick}>
         {submitStatus && (
           <div className="draft-indicator" style={{ display: 'block' }}>
             {submitStatus}
@@ -425,7 +482,7 @@ const MultiStepForm = ({
       <div className="form-container">
         {/* Step 1: Visit Date */}
         {currentStep === FORM_STEPS.VISIT_DATE && (
-          <div className="form-step active visit-date-step">
+          <div className="form-step active visit-date-step" style={{ paddingBottom: '20px' }}>
             <h2 className="step-title">Visit Date</h2>
             <DatePickerField
               selectedDate={selectedDate}
