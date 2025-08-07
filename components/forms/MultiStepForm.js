@@ -482,17 +482,19 @@ const MultiStepForm = ({
       <div className="form-container">
         {/* Step 1: Visit Date */}
         {currentStep === FORM_STEPS.VISIT_DATE && (
-          <div className="form-step active visit-date-step" style={{ paddingBottom: '20px' }}>
-            <h2 className="step-title">Visit Date</h2>
-            <DatePickerField
-              selectedDate={selectedDate}
-              onChange={(date) => {
-                setSelectedDate(date);
-                setHasUnsavedChanges(true);
-              }}
-              error={errors.visitDate}
-              required
-            />
+          <div className="form-step active visit-date-step">
+            <div className="visit-date-content">
+              <h2 className="step-title">Visit Date</h2>
+              <DatePickerField
+                selectedDate={selectedDate}
+                onChange={(date) => {
+                  setSelectedDate(date);
+                  setHasUnsavedChanges(true);
+                }}
+                error={errors.visitDate}
+                required
+              />
+            </div>
           </div>
         )}
 
@@ -705,6 +707,8 @@ const MultiStepForm = ({
           overflow-y: auto;
           overflow-x: hidden;
           -webkit-overflow-scrolling: touch;
+          padding-top: 0;
+          padding-bottom: 0;
         }
 
         .visit-date-step {
@@ -713,6 +717,18 @@ const MultiStepForm = ({
           flex-direction: column;
           padding: 0;
           overflow-y: auto;
+          overflow-x: hidden;
+          -webkit-overflow-scrolling: touch;
+          min-height: 100%;
+        }
+
+        .visit-date-content {
+          display: flex;
+          flex-direction: column;
+          padding-bottom: 20px;
+          min-height: 100%;
+          overflow-y: auto;
+          overflow-x: hidden;
           -webkit-overflow-scrolling: touch;
         }
 
@@ -793,6 +809,31 @@ const MultiStepForm = ({
           font-size: 12px;
           font-weight: 500;
           white-space: nowrap;
+        }
+
+        /* Mobile-specific improvements for scrolling */
+        @media (max-width: 480px) {
+          .visit-date-step {
+            min-height: 100%;
+          }
+
+          .visit-date-content {
+            min-height: 100%;
+            padding-bottom: 40px;
+          }
+
+          .form-container {
+            min-height: 100%;
+          }
+        }
+
+        /* Ensure proper touch scrolling on iOS */
+        @supports (-webkit-overflow-scrolling: touch) {
+          .visit-date-step,
+          .visit-date-content,
+          .form-container {
+            -webkit-overflow-scrolling: touch;
+          }
         }
 
       `}</style>

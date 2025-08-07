@@ -76,7 +76,9 @@ const DatePickerField = ({
           padding: 0 20px;
           flex: 1;
           overflow-y: auto;
+          overflow-x: hidden;
           -webkit-overflow-scrolling: touch;
+          min-height: 100%;
         }
 
         .date-input-container {
@@ -115,6 +117,8 @@ const DatePickerField = ({
           margin-top: 5px;
           flex: 1;
           min-height: 0;
+          overflow-y: visible;
+          padding-bottom: 20px;
         }
 
         .calendar-icon {
@@ -142,7 +146,7 @@ const DatePickerField = ({
           max-width: 320px !important;
           margin: 0 auto !important;
           overflow: hidden !important;
-          max-height: 300px !important;
+          max-height: 350px !important;
         }
 
         .react-datepicker {
@@ -391,6 +395,31 @@ const DatePickerField = ({
           color: white !important;
           font-weight: 600 !important;
           border: none !important;
+        }
+
+        /* Mobile-specific improvements */
+        @media (max-width: 480px) {
+          .date-input-group {
+            min-height: 100%;
+            padding-bottom: 40px;
+          }
+
+          .calendar-container {
+            padding-bottom: 40px;
+          }
+
+          .date-picker-calendar {
+            max-width: 280px !important;
+            max-height: 300px !important;
+          }
+        }
+
+        /* Ensure proper touch scrolling on iOS */
+        @supports (-webkit-overflow-scrolling: touch) {
+          .date-input-group,
+          .calendar-container {
+            -webkit-overflow-scrolling: touch;
+          }
         }
       `}</style>
     </div>
