@@ -78,7 +78,7 @@ const DatePickerField = ({
           overflow-y: auto;
           overflow-x: hidden;
           -webkit-overflow-scrolling: touch;
-          min-height: 100%;
+          min-height: 450px;
         }
 
         .date-input-container {
@@ -400,7 +400,7 @@ const DatePickerField = ({
         /* Mobile-specific improvements */
         @media (max-width: 480px) {
           .date-input-group {
-            min-height: 100%;
+            min-height: 450px;
             padding-bottom: 40px;
           }
 
