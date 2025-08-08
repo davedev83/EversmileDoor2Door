@@ -94,7 +94,6 @@ const VisitList = ({
           flex: 1;
           display: flex;
           flex-direction: column;
-          min-height: 0; /* Important for flex child to shrink */
         }
 
         .visits-title {
@@ -103,19 +102,10 @@ const VisitList = ({
           color: #2c3e50;
           margin-bottom: 20px;
           text-align: center;
-          flex-shrink: 0; /* Don't shrink the title */
         }
 
         .visits-scroll-container {
           flex: 1;
-          overflow-y: auto;
-          -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
-          overscroll-behavior: contain; /* Prevent bounce on mobile */
-          padding-right: 5px; /* Space for scrollbar */
-          margin-right: -5px; /* Offset the padding */
-          /* Ensure proper scrolling on mobile */
-          touch-action: pan-y;
-          scroll-behavior: smooth;
         }
 
         .visits-container {

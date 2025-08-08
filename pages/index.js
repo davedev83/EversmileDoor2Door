@@ -167,9 +167,7 @@ export default function Home() {
             flex: 1,
             padding: '20px',
             display: 'flex',
-            flexDirection: 'column',
-            minHeight: 0, /* Important for flex child to shrink */
-            overflow: 'hidden' /* Prevent main from scrolling */
+            flexDirection: 'column'
           }}>
             <Button
               onClick={handleAddNewVisit}

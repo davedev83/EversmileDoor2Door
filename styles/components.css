@@ -71,7 +71,6 @@
 .form-container {
   flex: 1;
   padding: var(--spacing-xl) var(--spacing-lg);
-  overflow-y: auto;
 }
 
 .form-step {

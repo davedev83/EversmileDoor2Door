@@ -13,13 +13,12 @@ const AppContainer = ({ children }) => {
         .app-container {
           max-width: 500px;
           margin: 0 auto;
-          height: 100vh;
-          height: 100dvh; /* Dynamic viewport height for mobile browsers */
+          min-height: 100vh;
+          min-height: 100dvh; /* Dynamic viewport height for mobile browsers */
           display: flex;
           flex-direction: column;
           background: white;
           box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-          overflow: hidden;
           position: relative;
         }
 

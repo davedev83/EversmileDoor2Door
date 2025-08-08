@@ -74,11 +74,6 @@ const DatePickerField = ({
           gap: 10px;
           margin-bottom: 10px;
           padding: 0 20px;
-          flex: 1;
-          overflow-y: auto;
-          overflow-x: hidden;
-          -webkit-overflow-scrolling: touch;
-          min-height: 450px;
         }
 
         .date-input-container {
@@ -115,9 +110,6 @@ const DatePickerField = ({
           display: flex;
           justify-content: center;
           margin-top: 5px;
-          flex: 1;
-          min-height: 0;
-          overflow-y: visible;
           padding-bottom: 20px;
         }
 
@@ -146,7 +138,6 @@ const DatePickerField = ({
           max-width: 320px !important;
           margin: 0 auto !important;
           overflow: hidden !important;
-          max-height: 350px !important;
         }
 
         .react-datepicker {
@@ -400,7 +391,7 @@ const DatePickerField = ({
         /* Mobile-specific improvements */
         @media (max-width: 480px) {
           .date-input-group {
-            min-height: 450px;
+            padding: 0 15px;
             padding-bottom: 40px;
           }
 
@@ -410,7 +401,6 @@ const DatePickerField = ({
 
           .date-picker-calendar {
             max-width: 280px !important;
-            max-height: 300px !important;
           }
         }
 
